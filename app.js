@@ -1,12 +1,18 @@
 var https = require('https');
-var options = {
-    host: 'moja.pg.edu.pl',
-    port: 443,
-    method: 'GET'
-};
+var config = require("./config.js");
 
-var req = https.request(options, function(res) {
-    console.log(res.connection.getPeerCertificate(detailed = true));
+config.sites.forEach(site => {
+    config.ports.forEach(port => {
+        config.methods.forEach(method => {
+            callAndPrint(site, port, method);
+        })
+    })
 });
 
-req.end();
+function callAndPrint(host, port, method) {
+    var req = https.request({host, port, method}, function(res) {
+        console.log(res.socket.getPeerCertificate());
+    });
+
+    req.end();
+}
