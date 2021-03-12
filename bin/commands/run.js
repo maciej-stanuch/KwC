@@ -3,7 +3,7 @@
 const https = require('https');
 const chalk = require('chalk');
 
-module.exports = () => {
+module.exports = (options) => {
     var req = https.request({
         host: "google.com",
         port: "443", 
@@ -12,5 +12,6 @@ module.exports = () => {
         console.log(res.socket.getPeerCertificate());
     });
 
+    console.log(options['files']);
     req.end();
 };
