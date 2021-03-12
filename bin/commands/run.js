@@ -9,6 +9,13 @@ module.exports = async (options) => {
     const certificateDetails = await getProtocolAndCertificate(addresses, 443);
 
     console.log(certificateDetails);
+
+    // We have to check if its self-signed, its one of the metrics.
+    const selfSigned = certificateDetails.filter(it => !it.error).filter(it => JSON.stringify(it.certificate.subject) == JSON.stringify(it.certificate.issuer));
+    if (selfSigned.length > 0) {
+        console.log(chalk.bgRed(chalk.whiteBright('SELF-SIGNED:')))
+        console.log(selfSigned)
+    }
 };
 
 /**
@@ -48,20 +55,23 @@ const parseAddresses = (fileList) => {
  * 
  * @param {string[]} urls - URLs to make request to.
  * @param {number} port - Port on which request should be made.
- * @returns {Promise<{protocol: string, certificate: any, error: Error}[]>} Promise of a list of a protocol and a certificate details for each URL.
+ * @returns {Promise<{url: string, protocol: string, certificate: any, error: Error}[]>} Promise of a list of a protocol and a certificate details for each URL.
  */
 const getProtocolAndCertificate = async (urls, port) => {
     return Promise.all(urls.map(url => new Promise((resolve, reject) => {
         https.request({
             host: url,
             port: port,
-            method: 'GET'
+            method: 'GET',
+            rejectUnauthorized: false,
         }, (res) => resolve({
+            url: url,
             protocol: res.socket.getProtocol(),
             certificate: res.socket.getPeerCertificate(true),
             error: undefined,
         }))
         .on('error', (err) => resolve({
+            url: url,
             protocol: undefined,
             certificate: undefined,
             error: err,
