@@ -3,19 +3,22 @@
 const https = require('https');
 const fs = require('fs');
 const chalk = require('chalk');
+const config = require('../../config.json');
 
 module.exports = async (options) => {
     const addresses = parseAddresses(getFileList(options.files))
-    const certificateDetails = await getProtocolAndCertificate(addresses, 443);
+    config.ports.forEach(async port => {
+        const certificateDetails = await getProtocolAndCertificate(addresses, port)
+        console.log(`PORT ${port}`);
+        console.log(certificateDetails);
 
-    console.log(certificateDetails);
-
-    // We have to check if its self-signed, its one of the metrics.
-    const selfSigned = certificateDetails.filter(it => !it.error).filter(it => JSON.stringify(it.certificate.subject) == JSON.stringify(it.certificate.issuer));
-    if (selfSigned.length > 0) {
-        console.log(chalk.bgRed(chalk.whiteBright('SELF-SIGNED:')))
-        console.log(selfSigned)
-    }
+        // We have to check if its self-signed, its one of the metrics.
+        const selfSigned = certificateDetails.filter(it => !it.error).filter(it => JSON.stringify(it.certificate.subject) == JSON.stringify(it.certificate.issuer));
+        if (selfSigned.length > 0) {
+            console.log(chalk.bgRed(chalk.whiteBright('SELF-SIGNED:')))
+            console.log(selfSigned)
+        }
+    });
 };
 
 /**
@@ -37,15 +40,15 @@ const parseAddresses = (fileList) => {
     let addresses = []
     fileList.forEach(file => {
         try {
-        const fileContent = fs.readFileSync(file).toString().split("\n");
-        console.log(`${chalk.green(file + '[' + fileContent.length + ']')}:${fileContent}`);
-        addresses = addresses.concat(fileContent);
+            const fileContent = fs.readFileSync(file).toString().split("\n");
+            console.log(`${chalk.green(file + '[' + fileContent.length + ']')}:${fileContent}`);
+            addresses = addresses.concat(fileContent);
         } catch (error) {
             console.error(chalk.redBright(error));
         }
     });
 
-    console.log(chalk.blueBright(`Finished. Parsed ${addresses.length} ${addresses.length == 1 ? 'address': 'addresses'}.`));
+    console.log(chalk.blueBright(`Finished. Parsed ${addresses.length} ${addresses.length == 1 ? 'address' : 'addresses'}.`));
     return addresses;
 }
 
@@ -70,13 +73,13 @@ const getProtocolAndCertificate = async (urls, port) => {
             certificate: res.socket.getPeerCertificate(true),
             error: undefined,
         }))
-        .on('error', (err) => resolve({
-            url: url,
-            protocol: undefined,
-            certificate: undefined,
-            error: err,
-        }))
-        .end();
+            .on('error', (err) => resolve({
+                url: url,
+                protocol: undefined,
+                certificate: undefined,
+                error: err,
+            }))
+            .end();
     })
     )).then(responses => {
         return responses;

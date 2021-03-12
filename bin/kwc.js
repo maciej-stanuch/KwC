@@ -24,7 +24,7 @@ program
     .command('run')
     .alias('r')
     .description('Runs program with default configuration.')
-    .option('-f, --files <files>', 'Files with addresses to analyze.', 'db.txt')
+    .option('-f, --files <files>', 'Files with addresses to analyze.', config.urlFileDefault)
     .action((options) => runCommand(options));
 
 program.parse(process.argv);
