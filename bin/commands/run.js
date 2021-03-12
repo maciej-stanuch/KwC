@@ -73,7 +73,7 @@ const getProtocolAndCertificate = async (urls, port) => {
             certificate: res.socket.getPeerCertificate(true),
             error: undefined,
         }))
-            .on('error', (err) => resolve({
+            .on('error', (err) => reject({
                 url: url,
                 protocol: undefined,
                 certificate: undefined,
