@@ -3,3 +3,4 @@ jandaciuk.pl
 wykop.pl
 wp.pl
 youtube.com
+tls-v1-0.badssl.com

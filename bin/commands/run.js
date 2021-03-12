@@ -30,7 +30,7 @@ const parseAddresses = (fileList) => {
     let addresses = []
     fileList.forEach(file => {
         try {
-        const fileContent = fs.readFileSync(file).toString().split("\r\n");
+        const fileContent = fs.readFileSync(file).toString().split("\n");
         console.log(`${chalk.green(file + '[' + fileContent.length + ']')}:${fileContent}`);
         addresses = addresses.concat(fileContent);
         } catch (error) {
