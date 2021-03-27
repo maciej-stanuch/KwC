@@ -1,7 +1,7 @@
-google.com
-jandaciuk.pl
-wykop.pl
-wp.pl
-youtube.com
-tls-v1-0.badssl.com
+google.com,
+jandaciuk.pl,
+wykop.pl,
+wp.pl,
+youtube.com,
+tls-v1-0.badssl.com,
 self-signed.badssl.com
