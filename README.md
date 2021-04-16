@@ -8,6 +8,8 @@
 * Expired certificate
 * Name mismatch error
 * SSL certificate revoked error - TODO
+* brak list odwołań,
+* ocsp, 
 
 
 ### Things to do
